@@ -7,6 +7,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { AppProps } from "next/app";
 import { RecoilRoot } from "recoil";
 import Layout from "../components/Layout";
+import "../styles/global.css";
 
 const queryClient = new QueryClient();
 

@@ -7,6 +7,7 @@ const Wrapper = styled.nav`
   position: relative;
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 100%;
   gap: 10px;
   padding-top: 20px;

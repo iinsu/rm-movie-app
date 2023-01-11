@@ -1,5 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import styled from "styled-components";
 import Seo from "../components/Seo";
 
@@ -24,6 +26,7 @@ const MovieImg = styled(Image)`
   height: auto !important;
   position: relative !important;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  transition: transform 0.2s ease-in-out;
   cursor: pointer;
   &:hover {
     transform: scale(1.05) translateY(-10px);
@@ -37,17 +40,41 @@ const MovieTitle = styled(Link)`
 `;
 
 const fetchMovies = async () => {
-  const response = await fetch(``);
+  const response = await fetch(`/api/movies`);
   const json = await response.json();
   const { results } = json;
   return results;
 };
 
 export default function Home() {
+  const movieList = useQuery(["movieList"], () => fetchMovies());
+  const router = useRouter();
+  const onClick = (id: number, title: string) => {
+    router.push(`/movies/${title}/${id}`);
+  };
+
+  movieList.isLoading && <span>Loading...</span>;
+  movieList.isError && <span>Error</span>;
+
   return (
     <Wrapper>
       <Seo title="Home" />
-      <h1>메인 페이지</h1>
+      {movieList.data?.map((movie: any) => (
+        <Movie key={movie.id}>
+          <MovieImg
+            src={`https://image.tmdb.org/t/p/w500/${movie.poster_path}`}
+            alt="Poster"
+            fill
+            sizes="100%"
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=="
+            onClick={() => onClick(movie.id, movie.original_title)}
+          />
+          <MovieTitle href={`/movies/${movie.original_title}/${movie.id}`}>
+            {movie.original_title}
+          </MovieTitle>
+        </Movie>
+      ))}
     </Wrapper>
   );
 }
